@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="ru" xmlns:th="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta charset="utf-8">
+    <title th:text="${title}">Custom Clearance Cost</title>
+</head>
+
+<body bgcolor="#b7f9ff">
+<!--<form action="/" method="post">-->
+<form action="/" method="get">
+
+    <!--Input data-->
+    <table align="center" width="95%" cellpadding="5">
+        <tr>
+            <th height="50" colspan="2"><font size="5">Розрахунок митних платежів за автомобіль</font></th>
+        </tr>
+
+        <!--owner-->
+        <tr>
+            <td align="right" width="50%">Власник</td>
+            <td align="left" width="50%">
+                <select name="ownerRequest">
+                    <div th:if="${vehicle.getOwner() != null}">
+                        <option selected="selected"
+                                th:text="${vehicle.getOwner().description}"
+                                th:value="${vehicle.getOwner()}">
+                    </div>
+                    <option th:each="Owner : ${T(com.customclearancecost.entity.Owner).values()}"
+                            th:text="${Owner.description}"
+                            th:value="${Owner}">
+                </select>
+            </td>
+        </tr>
+
+        <!--age-->
+        <tr>
+            <td align="right">Вік</td>
+            <td align="left">
+                <select name="ageRequest">
+                    <div th:if="${vehicle.getAge() != null}">
+                        <option selected="selected"
+                                th:text="${vehicle.getAge().description}"
+                                th:value="${vehicle.getAge()}">
+                    </div>
+                    <option th:each="Age : ${T(com.customclearancecost.entity.Age).values()}"
+                            th:text="${Age.description}"
+                            th:value="${Age}">
+                </select>
+            </td>
+        </tr>
+
+        <!--year of manufacture-->
+        <tr>
+            <td align="right">Рік виготовлення</td>
+            <td align="left">
+                <select name="yearOfManufactureRequest">
+                    <div th:if="${vehicle.getYearOfManufacture() != null}">
+                        <option selected="selected"
+                                th:text="${vehicle.getYearOfManufacture().description}"
+                                th:value="${vehicle.getYearOfManufacture()}">
+                    </div>
+                    <option th:each="YearOfManufacture : ${T(com.customclearancecost.entity.YearOfManufacture).values()}"
+                            th:text="${YearOfManufacture.description}"
+                            th:value="${YearOfManufacture}">
+                </select>
+            </td>
+        </tr>
+
+        <!--engine type-->
+        <tr>
+            <td align="right">Тип двигуна</td>
+            <td align="left">
+                <select name="engineTypeRequest">
+                    <div th:if="${vehicle.getEngineType() != null}">
+                        <option selected="selected"
+                                th:text="${vehicle.getEngineType().description}"
+                                th:value="${vehicle.getEngineType()}">
+                    </div>
+                    <option th:each="EngineType : ${T(com.customclearancecost.entity.EngineType).values()}"
+                            th:text="${EngineType.description}"
+                            th:value="${EngineType}">
+                </select>
+            </td>
+        </tr>
+
+        <!--capacity-->
+        <tr>
+            <td align="right">Об'єм двигуна (см<sup>
+                <small>3</small>
+            </sup>) для ДВЗ або ємність батареї (кВт/год) для EV
+            </td>
+            <td align="left">
+                <div th:if="${vehicle.getCapacity() != null}">
+                    <input type="text" name="capacityRequest"
+                           th:value="${vehicle.getCapacity()}">
+                </div>
+                <div th:if="${vehicle.getCapacity() == null}">
+                    <input type="text" name="capacityRequest"
+                           placeholder="введіть об'єм або ємність">
+                </div>
+            </td>
+        </tr>
+
+        <!--country of origin-->
+        <tr>
+            <td align="right">Країна походження</td>
+            <td align="left">
+                <select name="countryOfOriginRequest">
+                    <div th:if="${vehicle.getCountryOfOrigin() != null}">
+                        <option selected="selected"
+                                th:text="${vehicle.getCountryOfOrigin().description}"
+                                th:value="${vehicle.getCountryOfOrigin()}">
+                    </div>
+                    <option th:each="Country : ${T(com.customclearancecost.entity.CountryOfOrigin).values()}"
+                            th:text="${Country.description}"
+                            th:value="${Country}">
+                    </option>
+                </select>
+            </td>
+        </tr>
+
+        <!--currency of contract-->
+        <tr>
+            <td align="right">Валюта контракту</td>
+            <td align="left">
+                <select name="currencyOfContractRequest">
+                    <div th:if="${vehicle.getCurrencyOfContract() != null}">
+                        <option selected="selected"
+                                th:text="${vehicle.getCurrencyOfContract().description}"
+                                th:value="${vehicle.getCurrencyOfContract()}">
+                    </div>
+                    <option th:each="Currency : ${T(com.customclearancecost.entity.CurrencyOfContract).values()}"
+                            th:text="${Currency.description}"
+                            th:value="${Currency}">
+                    </option>
+
+                </select>
+            </td>
+        </tr>
+
+        <!--price in currency-->
+        <tr>
+            <td align="right">Вартість в валюті</td>
+            <td align="left">
+                <div th:if="${vehicle.getPriceInCurrency() != null}">
+                    <input type="text" name="priceInCurrencyRequest"
+                           th:value="${vehicle.getPriceInCurrency()}">
+                </div>
+                <div th:if="${vehicle.getPriceInCurrency() == null}">
+                    <input type="text" name="priceInCurrencyRequest"
+                           placeholder="введіть вартість в валюті">
+                </div>
+            </td>
+        </tr>
+
+        <!--button for calculation-->
+        <tr>
+            <td align="center" colspan="2">
+                <button type="submit"><b>Розрахувати</b></button>
+            </td>
+        </tr>
+    </table>
+
+
+    <!--Result of calculation-->
+    <br>
+    <table align="center" width="50%" cellpadding="5">
+
+        <div th:if="${vehicle.getCapacity() != null && vehicle.getPriceInCurrency() != null}">
+            <tr>
+                <th height="50" colspan="7"><font size="5">Результат розрахунку платежів</font></th>
+            </tr>
+        </div>
+
+        <!--Impost-->
+        <div th:if="${vehicle.getImpost() > 0}">
+            <tr>
+                <td align="left">Мито</td>
+                <td align="right">
+                    <text th:text="${vehicle.getImpostBasis()}"></text>
+                </td>
+                <td align="left">
+                    <text>грн.</text>
+                </td>
+                <td align="right">
+                    <text th:text="${vehicle.getImpostRate()}"></text>
+                </td>
+                <td align="left">
+                    <text>%</text>
+                </td>
+                <td align="right">
+                    <text th:text="${vehicle.getImpost()}"></text>
+                </td>
+                <td align="left">
+                    <text>грн.</text>
+                </td>
+            </tr>
+        </div>
+
+        <!--Excise-->
+        <div th:if="${vehicle.getExcise() > 0}">
+            <tr>
+                <td align="left">Акциз</td>
+                <td align="right">
+                    <text th:text="${vehicle.getExciseBasis()}"></text>
+                </td>
+                <div th:if="${vehicle.getEngineType().name().equals('petrol') || vehicle.getEngineType().name().equals('diesel')}">
+                    <td align="left">
+                        <text>см<sup>
+                            <small>3</small>
+                        </sup></text>
+                    </td>
+                </div>
+                <div th:if="${vehicle.getEngineType().name().equals('electric')}">
+                    <td align="left">
+                        <text>кВт/год</text>
+                    </td>
+                </div>
+
+                <td align="right">
+                    <text th:text="${vehicle.getExciseRate()}"></text>
+                </td>
+                <td align="left">
+                    <text>EUR</text>
+                </td>
+                <td align="right">
+                    <text th:text="${vehicle.getExcise()}"></text>
+                </td>
+                <td align="left">
+                    <text>грн.</text>
+                </td>
+            </tr>
+        </div>
+
+        <!--VAT-->
+        <div th:if="${vehicle.getVAT() > 0}">
+            <tr>
+                <td align="left">ПДВ</td>
+                <td align="right">
+                    <text th:text="${vehicle.getVATBasis()}"></text>
+                </td>
+                <td align="left">
+                    <text>грн.</text>
+                </td>
+                <td align="right">
+                    <text th:text="${vehicle.getVATRate()}"></text>
+                </td>
+                <td align="left">
+                    <text>%</text>
+                </td>
+                <td align="right">
+                    <text th:text="${vehicle.getVAT()}"></text>
+                </td>
+                <td align="left">
+                    <text>грн.</text>
+                </td>
+            </tr>
+        </div>
+    </table>
+
+
+    <!--Missing data to calculate-->
+    <br>
+    <table align="center" width="50%" cellpadding="5" border="0">
+        <div th:if="${vehicle.getCapacity() == null || vehicle.getPriceInCurrency() == null}">
+            <tr>
+                <th height="50"><font size="5">Відсутні дані для розрахунку платежів</font></th>
+            </tr>
+        </div>
+    </table>
+</form>
+</body>
+</html>
